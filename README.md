@@ -1,3 +1,3 @@
 # programs
 
-Including some webCrawler and other python learing scripts
+Including some Beautifulsoup webCrawler and other python learing scripts
