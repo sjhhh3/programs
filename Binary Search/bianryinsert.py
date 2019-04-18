@@ -2,9 +2,10 @@ import bisect
 from creatRandom import *
 from typing import *
 import copy
+from timing import timing
 
-sample = [1, 3, 5, 7, 9]
-target = 0
+sample = [i for i in range(10000)]
+target = 8887
 
 
 def iter_binary_insert(li: List[int], t: int) -> List[int]:
@@ -24,7 +25,25 @@ def iter_binary_insert(li: List[int], t: int) -> List[int]:
                     left = mid + 1
         return left
 
-    pos = insert(left=0, right=len(li) - 1)
+    pos = insert(left=0, right=len(li)-1)
+    li.insert(pos, t)
+    return li
+
+
+def recursive_binary_insert(li: List[int], t: int) -> List[int]:
+    def insert(left, right):
+        if left == right:
+            if li[left] > t:
+                return left
+            else:
+                return left + 1
+        mid = (left+right) // 2
+        if li[mid] >= t:
+            return insert(left, mid)
+        else:
+            return insert(mid+1, right)
+
+    pos = insert(left=0, right=len(li)-1)
     li.insert(pos, t)
     return li
 
@@ -37,9 +56,41 @@ def bis_binary_insert(li: List[int], t: int) -> List[int]:
 
 if __name__ == "__main__":
 
-    for i in range(16):
-        li, t = random_lt_for_insert(10, (1, 100))
-        li2 = copy.deepcopy(li)
-        iter_binary_insert(li, t)
-        bis_binary_insert(li2, t),
-        print(t, li, li2, li == li2)
+    @timing
+    def test_correct(times):
+        for i in range(times):
+            li, t = random_lt_for_insert(10, (1, 100))
+            li2 = copy.deepcopy(li)
+            iter_binary_insert(li, t)
+            bis_binary_insert(li2, t),
+            print(t, li, li2, li == li2)
+
+
+    @timing
+    def test_iter_time(times):
+        for i in range(times):
+            li, t = random_lt_for_insert(10, (1, 100))
+            iter_binary_insert(li, t)
+
+
+    @timing
+    def test_recursive_time(times):
+        for i in range(times):
+            li, t = random_lt_for_insert(10, (1, 100))
+            recursive_binary_insert(li, t)
+
+
+    @timing
+    def test_bisect_time(times):
+        for i in range(times):
+            li, t = random_lt_for_insert(10, (1, 100))
+            bis_binary_insert(li, t)
+
+
+    test_iter_time(100)
+    test_recursive_time(100)
+    test_bisect_time(100)
+    # print(timeit(stmt='bis_binary_insert(sample, target)', number=10000, globals=globals()))
+    # print(timeit(stmt='recursive_binary_insert(sample, target)', number=10000, globals=globals()))
+    # print(timeit(stmt='iter_binary_insert(sample, target)', number=10000, globals=globals()))
+    # print(timeit(stmt="sample.index(8888)", number=10000, globals=globals()))

@@ -14,5 +14,5 @@ def random_lt_for_insert(length: int, ranging: Tuple[int, int]) -> Tuple[List[in
     start, end = ranging
     randomlist = [random.randint(start, end) for _ in range(length)]
     randomlist.sort()
-    tar = random.randint(start, end)
+    tar = random.randint(start-20, end+20)
     return randomlist, tar
